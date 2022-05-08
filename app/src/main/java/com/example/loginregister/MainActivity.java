@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         wuser = findViewById(R.id.wuser);
-        String user = getIntent().getStringExtra("username");
+        String user = getIntent().getStringExtra("student_id");
         wuser.setText(user);
 
     }
