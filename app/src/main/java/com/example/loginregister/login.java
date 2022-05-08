@@ -1,11 +1,18 @@
 package com.example.loginregister;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -33,47 +40,48 @@ public class login extends AppCompatActivity {
         signUpText = findViewById(R.id.signUpText);
         progressLogIn = findViewById(R.id.progressLogIn);
 
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String username, password;
-                username = String.valueOf(textInputLayoutUsername.getText());
-                password = String.valueOf(textInputLayoutPassword.getText());
-
-                if (!username.equals("") && !password.equals("")) {
-                    progressLogIn.setVisibility(View.VISIBLE);
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            String[] field = new String[2];
-                            field[0] = "username";
-                            field[1] = "password";
-                            //Creating array for data
-                            String[] data = new String[2];
-                            data[0] = username;
-                            data[1] = password;
-                            PutData putData = new PutData("http://192.168.8.106/LoginRegister/login.php", "POST", field, data);
-                            if (putData.startPut()) {
-                                if (putData.onComplete()) {
-                                    progressLogIn.setVisibility(View.GONE);
-                                    String result = putData.getResult();
-                                    if(result.equals("Login Success")){
-                                        Toast.makeText(login.this, result, Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(login.this, MainActivity.class);
-                                        intent.putExtra("username", username);
-                                        startActivity(intent);
-                                        finish();
-                                    }else{
-                                        Toast.makeText(login.this, result, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        });
+//        buttonLogin.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View view) {
+//                final String username, password;
+//                username = String.valueOf(textInputLayoutUsername.getText());
+//                password = String.valueOf(textInputLayoutPassword.getText());
+//
+//                if (!username.equals("") && !password.equals("")) {
+//                    progressLogIn.setVisibility(View.VISIBLE);
+//                    Handler handler = new Handler(Looper.getMainLooper());
+//                    handler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            String[] field = new String[2];
+//                            field[0] = "username";
+//                            field[1] = "password";
+//                            //Creating array for data
+//                            String[] data = new String[2];
+//                            data[0] = username;
+//                            data[1] = password;
+//                            PutData putData = new PutData("http://192.168.8.106/LoginRegister/login.php", "POST", field, data);
+//                            if (putData.startPut()) {
+//                                if (putData.onComplete()) {
+//                                    progressLogIn.setVisibility(View.GONE);
+//                                    String result = putData.getResult();
+//                                    if(result.equals("Login Success")){
+//                                        Toast.makeText(login.this, result, Toast.LENGTH_SHORT).show();
+//                                        Intent intent = new Intent(login.this, MainActivity.class);
+//                                        intent.putExtra("username", username);
+//                                        startActivity(intent);
+//                                        finish();
+//                                    }else{
+//                                        Toast.makeText(login.this, result, Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    });
+//                }
+//            }
+//        });
 
         signUpText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,5 +91,80 @@ public class login extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void letTheUserLoggedIn(View view){
+
+        if(!isConnected(login.this)){
+            showCustomDialog();
+        }
+
+        final String username, password;
+        username = String.valueOf(textInputLayoutUsername.getText());
+        password = String.valueOf(textInputLayoutPassword.getText());
+
+        if (!username.equals("") && !password.equals("")) {
+            progressLogIn.setVisibility(View.VISIBLE);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    String[] field = new String[2];
+                    field[0] = "username";
+                    field[1] = "password";
+                    //Creating array for data
+                    String[] data = new String[2];
+                    data[0] = username;
+                    data[1] = password;
+                    PutData putData = new PutData("http://192.168.1.243/LoginRegister/login.php", "POST", field, data);
+                    if (putData.startPut()) {
+                        if (putData.onComplete()) {
+                            progressLogIn.setVisibility(View.GONE);
+                            String result = putData.getResult();
+                            if(result.equals("Login Success")){
+                                Toast.makeText(login.this, result, Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(login.this, MainActivity.class);
+                                intent.putExtra("username", username);
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                Toast.makeText(login.this, result, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+//    Connect to the Internet
+    private boolean isConnected(login log){
+        ConnectivityManager connectivityManager = (ConnectivityManager) log.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo conWifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo conMobile = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        if((conWifi != null && conWifi.isConnected()) || (conMobile != null && conMobile.isConnected())){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private void showCustomDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(login.this);
+        builder.setMessage("Please Connect to the internet to proceed!!")
+                .setCancelable(false)
+                .setPositiveButton("Connect", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startActivity(new Intent(getApplicationContext(), signup.class));
+                finish();
+            }
+        });
+        builder.show();
     }
 }
