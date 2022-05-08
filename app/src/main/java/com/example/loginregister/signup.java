@@ -40,52 +40,6 @@ public class signup extends AppCompatActivity {
         loginText = findViewById(R.id.loginText);
         progressSignUp = findViewById(R.id.progressSignUp);
 
-//        buttonSignUp.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                final String fullname, username, password;
-//                fullname = String.valueOf(textInputLayoutFullname.getText());
-//                username = String.valueOf(textInputLayoutUsername.getText());
-//                password = String.valueOf(textInputLayoutPassword.getText());
-//
-//                if (!fullname.equals("") && !username.equals("") && !password.equals("")) {
-//                    progressSignUp.setVisibility(View.VISIBLE);
-//                    Handler handler = new Handler(Looper.getMainLooper());
-//                    handler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            String[] field = new String[3];
-//                            field[0] = "fullname";
-//                            field[1] = "username";
-//                            field[2] = "password";
-//                            //Creating array for data
-//                            String[] data = new String[3];
-//                            data[0] = fullname;
-//                            data[1] = username;
-//                            data[2] = password;
-//                            PutData putData = new PutData("http://192.168.1.243/LoginRegister/signup.php", "POST", field, data);
-//                            if (putData.startPut()) {
-//                                if (putData.onComplete()) {
-//                                    progressSignUp.setVisibility(View.GONE);
-//                                    String result = putData.getResult();
-//                                    if(result.equals("Sign Up Success")){
-//                                        Toast.makeText(signup.this, result, Toast.LENGTH_SHORT).show();
-//                                        Intent intent = new Intent(signup.this, login.class);
-//                                        startActivity(intent);
-//                                        finish();
-//                                    }else{
-//                                        Toast.makeText(signup.this, result, Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    });
-//                } else{
-//                    Toast.makeText(signup.this, "All fields required!!!", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
         loginText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
